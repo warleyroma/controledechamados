@@ -49,7 +49,8 @@ const fmtRestante = (restante) => {
 
 const input = document.querySelector("#input-adicionar")
 const tbody = document.querySelector("#table-body")
-
+let tdCancelar = document.createElement("td");
+let botaoCancelar = document.createElement("button");
 
 document.querySelector('#btn-adicionar').addEventListener('click', () => {
   if (input.value
@@ -57,7 +58,27 @@ document.querySelector('#btn-adicionar').addEventListener('click', () => {
     && !chamados.find(x => x.id === input.value)) {
     chamados.push({ id: input.value, registro: new Date() })
   }
+
+
+  botaoCancelar.classList.add("btn");
+  botaoCancelar.classList.add("btn-danger")
+  botaoCancelar.innerHTML = "Reiniciar";
+  tdCancelar.appendChild(botaoCancelar);
+  linha.appendChild(tdCancelar);
+  
+  botaoCancelar.onclick = () => {
+    chamado.registro = new Date();
+  }
+
 })
+
+
+
+
+/**document.querySelector('#btnresetar').addEventListener('click', (evt) => {
+  let idx = Number(evt.target.dataset.index);
+  chamados[idx]['registro'] = new Date()
+}) */
 
 //fim do backend do monitor de chamados
 
