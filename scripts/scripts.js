@@ -1,17 +1,19 @@
 //inicio do backend do monitor de chamados
 const chamados = []
+const input = document.querySelector("#input-adicionar")
 
-const tempoLimite = 30 * 100 * 1000;
+let tempoLimite = 30 * 100 * 1000;
 
 const aoExpirar = (chamado) => {
   alert(`Chamado expirou: ${chamado.id}!`)
 }
 
-const intv = setInterval(() => {
-  for (let i = chamados.length - 1; i >= 0; i--) {
-    const chamado = chamados[i];
-    const idLinha = `chamado-${chamado.id}`;
-    let linha = document.getElementById(idLinha);
+const contagemRegressiva = (restante, chamado) =>{
+
+  const intv = setInterval(() => {
+ 
+     let idLinha = `chamado-${chamado.id}`
+     let linha = document.getElementById(idLinha)
     if (!linha) {
       linha = document.createElement('tr')
       linha.id = idLinha;
@@ -20,21 +22,25 @@ const intv = setInterval(() => {
       }
       tbody.appendChild(linha)
     }
-    const cels = document.querySelectorAll(`#${idLinha} > td`)
-    const restante = msRestante(chamado.registro, new Date())
-    cels[1].innerText = chamado.id;
-    cels[2].innerText = fmtRestante(restante)
-    cels[3].innerHTML = btnresetar
+    let cels = document.querySelectorAll(`#${idLinha} > td`)
 
-    if (restante <= 0) {
-      // logica pra chamado expirado
+    if (restante == 0) {
+      clearInterval(intv)
       aoExpirar(chamado)
-      chamados.splice(i, 1)
       linha.remove()
     }
-  }
-}, 1000)
 
+    cels[0].innerText = chamado.id;
+    cels[1].innerText = fmtRestante(restante)
+    cels[2].innerHTML = '<button id="button'+chamado.id+'" class="btn btn-danger">Reiniciar Tempo</button>'
+    document.querySelector('#button'+chamado.id+'').addEventListener('click', () => {
+      clearInterval(intv)
+      contagemRegressiva(3000000, chamado)
+     })
+
+  restante = restante - 1000
+},1000)
+}
 const msRestante = (dtInicio, dtFim) => {
   return tempoLimite - (dtFim.getTime() - dtInicio.getTime());
 }
@@ -47,28 +53,19 @@ const fmtRestante = (restante) => {
     'Expirado!'
 }
 
-const input = document.querySelector("#input-adicionar")
+
 const tbody = document.querySelector("#table-body")
-let tdCancelar = document.createElement("td");
-let botaoCancelar = document.createElement("button");
+
 
 document.querySelector('#btn-adicionar').addEventListener('click', () => {
-  if (input.value
-    && input.value.length
-    && !chamados.find(x => x.id === input.value)) {
-    chamados.push({ id: input.value, registro: new Date() })
-  }
 
+  const listachamados = new Object()
+      listachamados.id = input.value
+      listachamados.registro = new Date()
+      listachamados.intervalo = contagemRegressiva(3000000, listachamados)
+      chamados.push(listachamados)
 
-  botaoCancelar.classList.add("btn");
-  botaoCancelar.classList.add("btn-danger")
-  botaoCancelar.innerHTML = "Reiniciar";
-  tdCancelar.appendChild(botaoCancelar);
-  linha.appendChild(tdCancelar);
-  
-  botaoCancelar.onclick = () => {
-    chamado.registro = new Date();
-  }
+ 
 
 })
 
