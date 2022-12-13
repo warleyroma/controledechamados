@@ -32,7 +32,7 @@ const contagemRegressiva = (restante, chamado) =>{
 
     cels[0].innerText = chamado.id;
     cels[1].innerText = fmtRestante(restante)
-    cels[2].innerHTML = '<button id="button'+chamado.id+'" class="btn btn-danger">Reiniciar Tempo</button>'
+    cels[2].innerHTML = '<button id="button'+chamado.id+'"class="row btn btn-danger">Reiniciar Tempo</button>'
     document.querySelector('#button'+chamado.id+'').addEventListener('click', () => {
       clearInterval(intv)
       contagemRegressiva(3000000, chamado)
